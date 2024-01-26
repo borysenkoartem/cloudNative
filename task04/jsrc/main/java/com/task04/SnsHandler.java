@@ -21,8 +21,8 @@ public class SnsHandler implements RequestHandler<SNSEvent, Map<String, Object>>
         if (Objects.nonNull(snsEvent)) {
             for (SNSEvent.SNSRecord snsMessage : snsEvent.getRecords()) {
                 String messageId = snsMessage.getSNS().getMessageId();
-                String topic = snsMessage.getSNS().getTopicArn();
-                System.out.println("Received SNS message - MessageId: " + messageId + ", Topic: " + topic);
+                String message = snsMessage.getSNS().getMessage();
+                System.out.println("Received SNS message - MessageId: " + messageId + ", Message: " + message);
             }
         }
         return null;
