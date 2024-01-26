@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @LambdaHandler(lambdaName = "hello_world",
-        roleName = "hello_world-role",
-        isPublishVersion = true
+        roleName = "hello_world-role"
 )
 @LambdaUrlConfig(
         authType = AuthType.NONE,
