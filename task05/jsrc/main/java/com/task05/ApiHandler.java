@@ -8,9 +8,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.syndicate.deployment.annotations.events.DynamoDbTriggerEventSource;
 import com.syndicate.deployment.annotations.lambda.LambdaHandler;
-import com.syndicate.deployment.annotations.resources.DependsOn;
+import com.syndicate.deployment.model.DeploymentRuntime;
 import com.syndicate.deployment.model.LambdaSnapStart;
-import com.syndicate.deployment.model.ResourceType;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -19,10 +18,10 @@ import java.util.UUID;
 
 @LambdaHandler(lambdaName = "api_handler",
         roleName = "api_handler-role",
+        runtime = DeploymentRuntime.JAVA11,
         snapStart = LambdaSnapStart.PublishedVersions
 )
 @DynamoDbTriggerEventSource(targetTable = "Events", batchSize = 1)
-@DependsOn(name = "Events", resourceType = ResourceType.DYNAMODB_TABLE)
 
 public class ApiHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
