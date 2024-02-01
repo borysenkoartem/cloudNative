@@ -23,7 +23,7 @@ import java.util.UUID;
 
 public class ApiHandler implements RequestHandler<Map<String, Object>, Map<String, Object>> {
 
-    private static final String DYNAMO_DB_TABLE_NAME = "Events";
+    private static final String DYNAMO_DB_TABLE_NAME = "cmtr-a655d43a-Events-test";
 
     @Override
     public Map<String, Object> handleRequest(Map<String, Object> stringObjectMap, Context context) {
