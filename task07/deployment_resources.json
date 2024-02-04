@@ -37,7 +37,7 @@
       "${account_id}"
     ]
   },
-  "cmtr-a655d43a-uuid-storage-test": {
+  "uuid-storage": {
     "resource_type": "s3_bucket",
     "location": "eu-central-1",
     "acl": "private",
