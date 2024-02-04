@@ -12,8 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import static sun.plugin2.util.PojoUtil.toJson;
 
 @LambdaHandler(lambdaName = "uuid_generator",
         roleName = "uuid_generator-role"
@@ -27,16 +31,13 @@ public class UuidGenerator implements RequestHandler<Object, String> {
 
     @Override
     public String handleRequest(Object input, Context context) {
-        // Generate 10 random UUIDs
-        List<String> uuids = generateRandomUuids(10);
-
-        // Create a new file with the Lambda execution start time as the filename
         String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-        // Combine UUIDs into a string
-        String content = String.format("{'ids': [%s]}", String.join(",", uuids));
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("ids", generateRandomUuids(10));
 
-        // Upload the file to S3 bucket
+        String content = toJson(jsonMap);
+
         uploadToS3(fileName, content);
 
         return "UUIDs uploaded to S3 successfully!";
