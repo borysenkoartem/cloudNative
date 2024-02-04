@@ -31,7 +31,7 @@ public class UuidGenerator implements RequestHandler<Object, String> {
 		List<String> uuids = generateRandomUuids(10);
 
 		// Create a new file with the Lambda execution start time as the filename
-		String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now()) + ".txt";
+		String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
 		// Combine UUIDs into a string
 		String content = String.join("\n", uuids);
@@ -57,6 +57,7 @@ public class UuidGenerator implements RequestHandler<Object, String> {
 		s3Client.putObject(PutObjectRequest.builder()
 						.bucket(BUCKET_NAME)
 						.key(fileName)
+						.contentType("txt")
 						.build(),
 				RequestBody.fromBytes(content.getBytes(StandardCharsets.UTF_8)));
 
