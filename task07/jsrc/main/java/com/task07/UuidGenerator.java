@@ -34,7 +34,7 @@ public class UuidGenerator implements RequestHandler<Object, String> {
         String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
         // Combine UUIDs into a string
-        String content = String.format("{\"ids\": [%s]}", String.join("," + System.lineSeparator(), uuids));
+        String content = String.format("{'ids': [%s]}", String.join(",", uuids));
 
         // Upload the file to S3 bucket
         uploadToS3(fileName, content);
@@ -45,7 +45,7 @@ public class UuidGenerator implements RequestHandler<Object, String> {
     private List<String> generateRandomUuids(int count) {
         List<String> uuids = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            uuids.add(UUID.randomUUID().toString());
+            uuids.add("'" + UUID.randomUUID().toString() + "'");
         }
         return uuids;
     }
