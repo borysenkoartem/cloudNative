@@ -16,52 +16,51 @@ import java.util.List;
 import java.util.UUID;
 
 @LambdaHandler(lambdaName = "uuid_generator",
-	roleName = "uuid_generator-role"
+        roleName = "uuid_generator-role"
 )
 
 @RuleEventSource(targetRule = "uuid_trigger")
 
 public class UuidGenerator implements RequestHandler<Object, String> {
 
-	private static final String BUCKET_NAME = "cmtr-a655d43a-uuid-storage-test";
+    private static final String BUCKET_NAME = "cmtr-a655d43a-uuid-storage-test";
 
-	@Override
-	public String handleRequest(Object input, Context context) {
-		// Generate 10 random UUIDs
-		List<String> uuids = generateRandomUuids(10);
+    @Override
+    public String handleRequest(Object input, Context context) {
+        // Generate 10 random UUIDs
+        List<String> uuids = generateRandomUuids(10);
 
-		// Create a new file with the Lambda execution start time as the filename
-		String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
+        // Create a new file with the Lambda execution start time as the filename
+        String fileName = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
 
-		// Combine UUIDs into a string
-		String content = String.join("\n", uuids);
+        // Combine UUIDs into a string
+        String content = String.format("{\"ids\": [%s]}", String.join("," + System.lineSeparator(), uuids));
 
-		// Upload the file to S3 bucket
-		uploadToS3(fileName, content);
+        // Upload the file to S3 bucket
+        uploadToS3(fileName, content);
 
-		return "UUIDs uploaded to S3 successfully!";
-	}
+        return "UUIDs uploaded to S3 successfully!";
+    }
 
-	private List<String> generateRandomUuids(int count) {
-		List<String> uuids = new ArrayList<>();
-		for (int i = 0; i < count; i++) {
-			uuids.add(UUID.randomUUID().toString());
-		}
-		return uuids;
-	}
+    private List<String> generateRandomUuids(int count) {
+        List<String> uuids = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            uuids.add(UUID.randomUUID().toString());
+        }
+        return uuids;
+    }
 
-	private void uploadToS3(String fileName, String content) {
-		S3Client s3Client = S3Client.builder().build();
+    private void uploadToS3(String fileName, String content) {
+        S3Client s3Client = S3Client.builder().build();
 
-		// Upload the content to S3 bucket
-		s3Client.putObject(PutObjectRequest.builder()
-						.bucket(BUCKET_NAME)
-						.key(fileName)
-						.contentType("txt")
-						.build(),
-				RequestBody.fromBytes(content.getBytes(StandardCharsets.UTF_8)));
+        // Upload the content to S3 bucket
+        s3Client.putObject(PutObjectRequest.builder()
+                        .bucket(BUCKET_NAME)
+                        .key(fileName)
+                        .build(),
+                RequestBody.fromBytes(content.getBytes(StandardCharsets.UTF_8)));
 
-		// Close the S3 client
-		s3Client.close();
-	}
+        // Close the S3 client
+        s3Client.close();
+    }
 }
