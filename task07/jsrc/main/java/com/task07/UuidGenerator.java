@@ -2,6 +2,8 @@ package com.task07;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syndicate.deployment.annotations.events.RuleEventSource;
 import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static sun.plugin2.util.PojoUtil.toJson;
 
 @LambdaHandler(lambdaName = "uuid_generator",
         roleName = "uuid_generator-role"
@@ -49,6 +50,15 @@ public class UuidGenerator implements RequestHandler<Object, String> {
             uuids.add(UUID.randomUUID().toString());
         }
         return uuids;
+    }
+
+    private String toJson(Map<String, Object> jsonMap) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(jsonMap);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting Map to JSON", e);
+        }
     }
 
     private void uploadToS3(String fileName, String content) {
