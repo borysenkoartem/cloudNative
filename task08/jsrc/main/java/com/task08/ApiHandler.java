@@ -14,11 +14,12 @@ import com.syndicate.deployment.model.lambda.url.AuthType;
 import com.syndicate.deployment.model.lambda.url.InvokeMode;
 
 @LambdaHandler(lambdaName = "api_handler",
-	roleName = "api_handler-role"
+	roleName = "api_handler-role",
+		layers = {"sdk-layer"}
 )
 @LambdaLayer(
 		layerName = "sdk-layer",
-		libraries = {"lib/OpenMetio.jar"},
+		libraries = {"lib/OpenMetio-1.0.jar"},
 		runtime = DeploymentRuntime.JAVA8,
 		artifactExtension = ArtifactExtension.ZIP
 )
@@ -30,11 +31,11 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
 
 	private static final int SC_OK = 200;
 	private static final int SC_BAD_REQUEST = 400;
-	private final OpenMeteoAPIClient apiClient = new OpenMeteoAPIClient();
 
 	@Override
 	public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
 		try {
+			OpenMeteoAPIClient apiClient = new OpenMeteoAPIClient();
 			return new APIGatewayProxyResponseEvent()
 					.withStatusCode(SC_OK)
 					.withBody(apiClient.getWeatherForecast());
