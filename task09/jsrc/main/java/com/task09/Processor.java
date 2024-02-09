@@ -37,7 +37,7 @@ import java.util.UUID;
 )
 public class Processor implements RequestHandler<Object, Map<String, Object>> {
 
-	private static final String WEATHER_TABLE = "Weather";
+	private static final String WEATHER_TABLE = "cmtr-a655d43a-Weather-test";
 	private final OpenMeteoAPIClient apiClient = new OpenMeteoAPIClient();
 
 	public Map<String, Object> handleRequest(Object request, Context context) {
