@@ -1,10 +1,5 @@
 package com.task10;
 
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthRequest;
-import com.amazonaws.services.cognitoidp.model.AdminInitiateAuthResult;
-import com.amazonaws.services.cognitoidp.model.AuthFlowType;
-import com.amazonaws.services.cognitoidp.model.NotAuthorizedException;
-import com.amazonaws.services.cognitoidp.model.SignUpRequest;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
@@ -24,9 +19,7 @@ import com.syndicate.deployment.annotations.lambda.LambdaHandler;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -41,7 +34,7 @@ import java.util.UUID;
         @EnvironmentVariable(key = "booking_userpool", value = "${booking_userpool}")
 })
 
-public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class ApiHandler extends CommonTools implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private final DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBClientBuilder.defaultClient());
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -166,7 +159,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
                     .with("minOrder", requestJson.has("minOrder") ? requestJson.get("minOrder").asInt() : 0);
             tablesTable.putItem(table);
             response.setStatusCode(200);
-            response.setBody(table.toJSONPretty());
+            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE, "id", requestJson.get("id").asInt()));
         } catch (Exception e) {
             set500Error(response);
         }
@@ -180,7 +173,8 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
         try {
             String requestBody = request.getBody();
             JsonNode requestJson = objectMapper.readTree(requestBody);
-            Item resertvation = new Item().withPrimaryKey("reservationId", UUID.randomUUID().toString())
+            String uid = UUID.randomUUID().toString();
+            Item resertvation = new Item().withPrimaryKey("reservationId", uid)
                     .withInt("tableNumber", requestJson.get("tableNumber").asInt())
                     .withString("clientName", requestJson.get("clientName").asText())
                     .withString("phoneNumber", requestJson.get("phoneNumber").asText())
@@ -189,7 +183,7 @@ public class ApiHandler implements RequestHandler<APIGatewayProxyRequestEvent, A
                     .withString("slotTimeEnd", requestJson.get("slotTimeEnd").asText());
             reservationTable.putItem(resertvation);
             response.setStatusCode(200);
-            response.setBody(resertvation.toJSONPretty());
+            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE, "reservationId", uid));
         } catch (Exception e) {
             set500Error(response);
         }
