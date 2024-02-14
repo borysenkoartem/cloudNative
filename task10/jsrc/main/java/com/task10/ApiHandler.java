@@ -20,6 +20,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,9 +68,9 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
             case "/tables/{tableId}":
                 return getTable(request);
             case "/tables":
-                return getTablesValues(System.getenv("tables_table"));
+                return getTablesValues(System.getenv("tables_table"), "tables");
             case "/reservations":
-                return getTablesValues(System.getenv("reservations_table"));
+                return getTablesValues(System.getenv("reservations_table"), "reservations");
             default:
                 return get400InvalidResponse();
         }
@@ -102,19 +103,19 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
 
     }
 
-    private APIGatewayProxyResponseEvent getTablesValues(String tableName) {
+    private APIGatewayProxyResponseEvent getTablesValues(String tableName, String itemName) {
         Table tablesTable = dynamoDB.getTable(tableName);
         APIGatewayProxyResponseEvent response = new APIGatewayProxyResponseEvent();
-        List<Map<String, Object>> tablesList = new ArrayList<>();
-
+        try {
+        List<String> result = new ArrayList<>();
         ItemCollection<ScanOutcome> items = tablesTable.scan();
         for (Item item : items) {
-            Map<String, Object> tableData = item.asMap();
-            tablesList.add(tableData);
+            result.add(objectMapper.writeValueAsString(item.asMap()));
         }
-        try {
             response.setStatusCode(200);
-            response.setBody(objectMapper.writeValueAsString(tablesList));
+            Map<String, List<String>> listMap = new HashMap<>();
+            listMap.put(itemName, result);
+            response.setBody(objectMapper.writeValueAsString(listMap));
         } catch (JsonProcessingException e) {
             set500Error(response);
         }
