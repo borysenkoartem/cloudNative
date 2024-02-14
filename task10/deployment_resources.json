@@ -88,7 +88,7 @@
     "authorizers": {
       "authorizer": {
         "type": "COGNITO_USER_POOLS",
-        "identity_source": "method.request.header.accessToken",
+        "identity_source": "method.request.header.Authorization",
         "user_pools": [
           "${booking_userpool}"
         ],
