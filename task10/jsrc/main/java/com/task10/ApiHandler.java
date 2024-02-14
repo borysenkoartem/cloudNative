@@ -159,7 +159,7 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
                     .with("minOrder", requestJson.has("minOrder") ? requestJson.get("minOrder").asInt() : 0);
             tablesTable.putItem(table);
             response.setStatusCode(200);
-            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE, "id", requestJson.get("id").asInt()));
+            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE2, "id", requestJson.get("id").asInt()));
         } catch (Exception e) {
             set500Error(response);
         }
@@ -174,7 +174,7 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
             String requestBody = request.getBody();
             JsonNode requestJson = objectMapper.readTree(requestBody);
             String uid = UUID.randomUUID().toString();
-            Item resertvation = new Item().withPrimaryKey("reservationId", uid)
+            Item resertvation = new Item().withPrimaryKey("id", uid)
                     .withInt("tableNumber", requestJson.get("tableNumber").asInt())
                     .withString("clientName", requestJson.get("clientName").asText())
                     .withString("phoneNumber", requestJson.get("phoneNumber").asText())
@@ -183,8 +183,9 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
                     .withString("slotTimeEnd", requestJson.get("slotTimeEnd").asText());
             reservationTable.putItem(resertvation);
             response.setStatusCode(200);
-            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE, "reservationId", uid));
+            response.setBody(String.format(SIMPLE_MESSAGE_JSON_TEMPLATE2, "reservationId", uid));
         } catch (Exception e) {
+            System.out.println("ERROR------>>>>>" + e.getMessage());
             set500Error(response);
         }
         return response;
@@ -196,7 +197,6 @@ public class ApiHandler extends CommonTools implements RequestHandler<APIGateway
     }
 
     private APIGatewayProxyResponseEvent get400InvalidResponse() {
-        System.out.println("CATCH INVALID REQUEST ------->");
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(400)
                 .withBody("Invalid request");

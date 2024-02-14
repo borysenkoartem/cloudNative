@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 abstract class CommonTools {
     protected final String SIMPLE_MESSAGE_JSON_TEMPLATE = "{\"%s\": \"%s\"}";
+    protected final String SIMPLE_MESSAGE_JSON_TEMPLATE2 = "{\"%s\": %s}";
     protected final ObjectMapper objectMapper;
 
     protected CommonTools(){
