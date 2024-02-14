@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @EnvironmentVariables(value = {
-        @EnvironmentVariable(key = "pool", value = "${booking_userpool}"),
+        @EnvironmentVariable(key = "booking_userpool", value = "${booking_userpool}"),
         @EnvironmentVariable(key = "region", value = "${region}"),
-        @EnvironmentVariable(key = "reservations", value = "${reservations_table}"),
-        @EnvironmentVariable(key = "tables", value = "${tables_table}")})
+        @EnvironmentVariable(key = "reservations_table", value = "${reservations_table}"),
+        @EnvironmentVariable(key = "tables_table", value = "${tables_table}")})
 @LambdaHandler(
         lambdaName = "api_handler",
         roleName = "lambda-role"
@@ -50,10 +50,10 @@ public class ApiGeneralHandler implements RequestHandler<APIGatewayProxyRequestE
 
     private Map<String, RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>> initHandlers() {
 
-        final String userPoolName = System.getenv("pool");
+        final String userPoolName = System.getenv("booking_userpool");
         final DynamoDB dynamoDB = new DynamoDB(AmazonDynamoDBAsyncClientBuilder.standard().withRegion(System.getenv("region")).build());
-        final ReservationDao reservationDao = new DynamoReservationDao(dynamoDB.getTable(System.getenv("reservations")));
-        final RestaurantTableDao restaurantTableDao = new DynamoRestaurantTableDao(dynamoDB.getTable(System.getenv("tables")));
+        final ReservationDao reservationDao = new DynamoReservationDao(dynamoDB.getTable(System.getenv("reservations_table")));
+        final RestaurantTableDao restaurantTableDao = new DynamoRestaurantTableDao(dynamoDB.getTable(System.getenv("tables_table")));
         final CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder().region(Region.of(System.getenv("region"))).build();
 
         Map<String, RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent>> requestHandlerMap = new HashMap<>();
