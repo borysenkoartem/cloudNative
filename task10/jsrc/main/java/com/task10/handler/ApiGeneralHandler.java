@@ -26,7 +26,7 @@ import java.util.Map;
         @EnvironmentVariable(key = "tables_table", value = "${tables_table}")})
 @LambdaHandler(
         lambdaName = "api_handler",
-        roleName = "lambda-role"
+        roleName = "api_handler-role"
 )
 public class ApiGeneralHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
